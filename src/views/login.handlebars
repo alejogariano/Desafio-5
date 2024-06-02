@@ -1,0 +1,38 @@
+<body style="text-align: center">
+    <form id="loginForm" style="margin: 100px">
+        <input class="list-group-item" type="email" name="email" placeholder="Email" required>
+        <input class="list-group-item" type="password" name="password" placeholder="Password" required>
+        <button class="btn btn-info" type="submit">Login</button>
+    </form>
+    <h5>
+        No tienes una cuenta?
+        <a href="/register">Registrarse</a>
+    </h5>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault()
+            const formData = new FormData(e.target)
+            const data = Object.fromEntries(formData)
+
+            try {
+                const response = await fetch('/api/sessions/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                })
+                const result = await response.json()
+
+                if (result.success) {
+                    Swal.fire('Éxito', result.message, 'success').then(() => {
+                        window.location.href = result.redirectUrl
+                    })
+                } else {
+                    Swal.fire('Error', result.message, 'error')
+                }
+            } catch (err) {
+                Swal.fire('Error', 'Algo salió mal. Inténtalo de nuevo más tarde.', 'error')
+            }
+        })
+    </script>
+</body>
